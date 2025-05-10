@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://prisly.cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id           String       @id @default(uuid())
+  name         String
+  users        User[]
+  documents    Document[]
+  departments  Department[]
+}
+
+model Department {
+  id                 Int         @id @default(autoincrement())
+  name               String
+  companyId          String
+  description        String?
+  users              User[]      @relation("UserDepartments")
+
+  categories Category[]
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  restrictedDocuments Document[] @relation("DocumentRestrictions")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  documents Document[] @relation("DocumentCategories")
+}
+
+
+enum Role {
+  ADMIN
+  VALIDATOR
+  EDITOR
+  USER
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  password     String
+  role         Role
+  companyId    String
+  company      Company        @relation(fields: [companyId], references: [id])
+  createdAt    DateTime       @default(now())
+  uploadedDocs Document[]     @relation("UploadedBy")
+  approvedDocs Document[]     @relation("ApprovedBy")
+  departments  Department[]   @relation("UserDepartments")
+
+  documentViews DocumentView[] @relation("UserViews")
+
+  temporaryTokens       TemporaryToken[]
+}
+
+model Document {
+  id           String     @id @default(uuid())
+  title        String
+  filePath     String
+
+  uploadedById String
+  uploadedBy   User       @relation("UploadedBy", fields: [uploadedById], references: [id])
+
+  approvedById String?
+  approvedBy   User?      @relation("ApprovedBy", fields: [approvedById], references: [id])
+
+  companyId String
+  company   Company    @relation(fields: [companyId], references: [id])
+
+  categories Category[] @relation("DocumentCategories")
+
+  restrictedToDepartments Department[] @relation("DocumentRestrictions")
+
+  status    String // "pending" | "approved" | "rejected"
+  createdAt DateTime @default(now())
+
+  versions DocumentVersion[]
+
+  views DocumentView[] @relation("DocumentViews") // Este documento foi visto por estes usuários
+
+  temporaryTokens      TemporaryToken[]
+}
+
+model DocumentVersion {
+  id         String   @id @default(cuid())
+  version    Int
+  filePath   String
+  createdAt  DateTime @default(now())
+  document   Document @relation(fields: [documentId], references: [id])
+  documentId String
+}
+
+model DocumentView {
+  id         Int      @id @default(autoincrement())
+  documentId String
+  viewerId   String
+  viewedAt   DateTime @default(now())
+  document   Document @relation("DocumentViews", fields: [documentId], references: [id])
+  viewer     User     @relation("UserViews", fields: [viewerId], references: [id])
+  @@index([documentId])
+  @@index([viewerId])
+  @@index([viewedAt])
+}
+
+model TemporaryToken {
+  token      String    @id @unique
+  documentId String
+  userId     String
+  expiresAt  DateTime 
+  createdAt  DateTime  @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
