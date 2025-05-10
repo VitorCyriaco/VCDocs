@@ -1,0 +1,71 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  margin: 0 auto;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-white text-black transition-colors duration-300;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  @apply w-1;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  @apply bg-white/10;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  @apply bg-black/30;
+}
+
+.toggle {
+  transition: 300ms;
+}
+
+.dark .check {
+  @apply bg-white/10 backdrop-blur-xl;
+}
+
+.dark .toggle {
+  @apply bg-zinc-900 top-1/2;
+}
+
+.dark .card {
+  @apply bg-zinc-900/90 backdrop-blur-xl text-white;
+}
+.dark .card:hover {
+  @apply bg-zinc-900;
+}
+
+.dark .background {
+  @apply bg-zinc-800 backdrop-blur-xl text-white border-black/20;
+}
+
+.dark .departments,
+.dark input {
+  @apply bg-white/10 backdrop-blur-xl text-white;
+}
+
+.dark .departments ul,
+.dark input ul {
+  @apply text-white;
+}
+
+
+.dark .userLink {
+  @apply bg-white/10 backdrop-blur-xl text-white;
+}
+
+.dark .upload {
+  @apply bg-white/10 backdrop-blur-xl text-white top-5 left-2/8;
+}
+
+.dark .viewer {
+  @apply bg-white/10 backdrop-blur-md text-white;
+}
