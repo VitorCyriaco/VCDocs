@@ -27,19 +27,19 @@ import { Roles } from '../auth/roles.decorator';
 import { Role, DocumentView, User } from '@prisma/client';
 
 @Controller('documents')
-@UseGuards(JwtAuthGuard)
 export class DocumentsController {
     constructor(private readonly documentsService: DocumentsService) { }
 
     @Post('upload')
     @Roles(Role.ADMIN, Role.VALIDATOR, Role.EDITOR)
-    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @UseInterceptors(FileInterceptor('file'))
     async uploadDocument(
         @UploadedFile() file: Express.Multer.File,
         @Request() req: any,
         @Body() body: { categoryIds?: string; restrictedDepartmentIds?: string },
     ) {
+
         const user = req.user as User;
         let categoryIds: number[] = [];
         let restrictedDepartmentIds: number[] = [];
@@ -82,6 +82,7 @@ export class DocumentsController {
     }
 
     @Get('company')
+    @UseGuards(JwtAuthGuard)
     async getCompanyDocuments(@Request() req: any) {
         const user = req.user as User;
         if (!user.companyId) {
@@ -91,6 +92,7 @@ export class DocumentsController {
     }
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     async findAll(
         @Request() req: any,
         @Query('status') status?: string,
@@ -127,12 +129,13 @@ export class DocumentsController {
 
     @Get('all')
     @Roles(Role.ADMIN)
-    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     async findAllDoc() {
         return this.documentsService.findAllDoc();
     }
 
     @Get('my-uploads')
+    @UseGuards(JwtAuthGuard)
     async getUserUploadedDocuments(@Request() req: any) {
         const user = req.user as User;
         return this.documentsService.getUserUploadedDocuments(user.id);
@@ -140,7 +143,7 @@ export class DocumentsController {
 
     @Patch(':id/approve')
     @Roles(Role.ADMIN, Role.VALIDATOR)
-    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     async approve(@Param('id') id: string, @Request() req: any) {
         const user = req.user as User;
         return this.documentsService.approveDocument(id, user.id);
@@ -148,17 +151,19 @@ export class DocumentsController {
 
     @Patch(':id/reject')
     @Roles(Role.ADMIN, Role.VALIDATOR)
-    @UseGuards(RolesGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     async reject(@Param('id') id: string) {
         return this.documentsService.rejectDocument(id);
     }
 
     @Get(':id/versions')
+    @UseGuards(JwtAuthGuard)
     async getVersions(@Param('id') id: string) {
         return this.documentsService.getVersions(id);
     }
 
     @Post(':id/log-view')
+    @UseGuards(JwtAuthGuard)
     async logView(
         @Param('id') id: string,
         @Request() req: any,
@@ -190,6 +195,7 @@ export class DocumentsController {
 
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getDocumentDetails(
         @Param('id') id: string,
         @Request() req: any,
@@ -217,6 +223,7 @@ export class DocumentsController {
     }
 
     @Get(':id/signed-url')
+    @UseGuards(JwtAuthGuard)
     async generateDocumentSignedUrl(
         @Param('id') id: string,
         @Request() req: any

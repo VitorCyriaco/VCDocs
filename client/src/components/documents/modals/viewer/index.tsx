@@ -209,7 +209,7 @@ export function DocumentViewModal({ isOpen, onClose, documentId }: DocumentViewM
                                     <object data={documentFileUrl} title={documentData.title}
                                         className="w-full flex-1 border border-zinc-300 rounded-md"
                                         style={{ minHeight: '300px' }} type="application/pdf">
-<p>Não foi possível carregar o visualizador de PDF. <a href={documentFileUrl} target="_blank" rel="noopener noreferrer">Clique aqui para abrir em nova aba</a>.</p>
+                                        <p>Não foi possível carregar o visualizador de PDF. <a href={documentFileUrl} target="_blank" rel="noopener noreferrer">Clique aqui para abrir em nova aba</a>.</p>
                                     </object>
                                 ) : (
                                     <div className="flex flex-col items-center justify-center h-full">
