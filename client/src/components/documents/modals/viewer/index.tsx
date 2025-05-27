@@ -55,61 +55,61 @@ export function DocumentViewModal({ isOpen, onClose, documentId }: DocumentViewM
             });
 
             if (!detailsResponse.ok) {
-                 const errorBody = await detailsResponse.text();
-                 const errorMessage = `Erro ao buscar detalhes do documento ${documentId}: ${detailsResponse.status} - ${detailsResponse.statusText}${errorBody ? ` - ${errorBody}` : ''}`;
-                 console.error(errorMessage);
+                const errorBody = await detailsResponse.text();
+                const errorMessage = `Erro ao buscar detalhes do documento ${documentId}: ${detailsResponse.status} - ${detailsResponse.statusText}${errorBody ? ` - ${errorBody}` : ''}`;
+                console.error(errorMessage);
 
-                 if (detailsResponse.status === 404) {
-                     setError('Documento não encontrado.');
-                 } else if (detailsResponse.status === 403) {
-                     setError('Você não tem permissão para ver este documento.');
-                 } else {
-                      setError('Erro ao carregar detalhes do documento.');
-                 }
-                  setLoading(false);
-                  return;
+                if (detailsResponse.status === 404) {
+                    setError('Documento não encontrado.');
+                } else if (detailsResponse.status === 403) {
+                    setError('Você não tem permissão para ver este documento.');
+                } else {
+                    setError('Erro ao carregar detalhes do documento.');
+                }
+                setLoading(false);
+                return;
             }
 
             const detailsData: DocumentDetailsProps = await detailsResponse.json();
             setDocumentData(detailsData);
 
             const logViewResponse = await fetch(`http://localhost:3001/documents/${documentId}/log-view`, {
-                 method: 'POST',
-                 headers: {
-                     'Authorization': `Bearer ${token}`,
-                     'Content-Type': 'application/json',
-                 },
-                 body: JSON.stringify({})
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
             });
 
             if (!logViewResponse.ok) {
-                 console.error(`Falha ao registrar visualização para documento ${documentId}: ${logViewResponse.status} - ${logViewResponse.statusText}`);
+                console.error(`Falha ao registrar visualização para documento ${documentId}: ${logViewResponse.status} - ${logViewResponse.statusText}`);
             } else {
-                 console.log(`Visualização do documento ${documentId} registrada.`);
+                console.log(`Visualização do documento ${documentId} registrada.`);
             }
 
             const signedUrlResponse = await fetch(`http://localhost:3001/documents/${documentId}/signed-url`, {
-                 method: 'GET',
-                 headers: {
-                     'Authorization': `Bearer ${token}`,
-                     'Content-Type': 'application/json',
-                 },
-             });
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
             if (!signedUrlResponse.ok) {
-                 const errorBody = await signedUrlResponse.text();
-                 const errorMessage = `Erro ao obter URL assinada para o documento ${documentId}: ${signedUrlResponse.status} - ${signedUrlResponse.statusText}${errorBody ? ` - ${errorBody}` : ''}`;
-                 console.error(errorMessage);
+                const errorBody = await signedUrlResponse.text();
+                const errorMessage = `Erro ao obter URL assinada para o documento ${documentId}: ${signedUrlResponse.status} - ${signedUrlResponse.statusText}${errorBody ? ` - ${errorBody}` : ''}`;
+                console.error(errorMessage);
 
-                 if (signedUrlResponse.status === 404) {
-                     setError('Arquivo do documento não encontrado ou acesso negado (URL assinada).');
-                 } else if (signedUrlResponse.status === 403) {
-                      setError('Você não tem permissão para obter a URL do arquivo.');
-                 } else {
-                     setError('Erro ao gerar link de visualização.');
-                 }
-                  setLoading(false);
-                  return;
+                if (signedUrlResponse.status === 404) {
+                    setError('Arquivo do documento não encontrado ou acesso negado (URL assinada).');
+                } else if (signedUrlResponse.status === 403) {
+                    setError('Você não tem permissão para obter a URL do arquivo.');
+                } else {
+                    setError('Erro ao gerar link de visualização.');
+                }
+                setLoading(false);
+                return;
             }
 
             const signedUrlData = await signedUrlResponse.json();
@@ -159,24 +159,23 @@ export function DocumentViewModal({ isOpen, onClose, documentId }: DocumentViewM
                             <p className="text-sm text-center">{error}</p>
                         </div>
                     ) : !documentData ? (
-                         <div className="flex flex-col items-center justify-center h-full">
-                             Documento não disponível.
-                         </div>
+                        <div className="flex flex-col items-center justify-center h-full">
+                            Documento não disponível.
+                        </div>
                     ) : (
                         <div className="flex h-full">
-                            <div className="w-1/3 border-r border-zinc-200 pr-4 overflow-y-auto custom-scroll text-sm">
-                                <h3 className="font-semibold mb-2">Detalhes</h3>
-                                <p><strong>ID:</strong> {documentData.id}</p>
-                                <p><strong>Título:</strong> {documentData.title}</p>
-                                <p><strong>Descrição:</strong> {documentData.description || 'N/A'}</p>
-                                <p><strong>Status:</strong> {documentData.status}</p>
-                                <p><strong>Criado em:</strong> {new Date(documentData.createdAt).toLocaleDateString('pt-BR')}</p>
-                                {documentData.uploadedBy && <p><strong>Upload por:</strong> {documentData.uploadedBy.name}</p>}
+                            <div className="w-1/3 border-r border-zinc-200 pr-4 overflow-y-auto custom-scroll text-md">
+                                <h3 className="font-semibold mb-3 uppercase">Detalhes</h3>
+                                <p className='mb-1'><strong>Título:</strong> {documentData.title}</p>
+                                <p className='mb-1'><strong>Descrição:</strong> {documentData.description || 'N/A'}</p>
+                                <p className='mb-1'><strong>Status:</strong> {documentData.status}</p>
+                                <p className='mb-1'><strong>Criado em:</strong> {new Date(documentData.createdAt).toLocaleDateString('pt-BR')}</p>
+                                {documentData.uploadedBy && <p><strong>Criado por:</strong> {documentData.uploadedBy.name}</p>}
                                 {documentData.approvedBy && <p><strong>Aprovado por:</strong> {documentData.approvedBy.name}</p>}
 
                                 {documentData.categories && documentData.categories.length > 0 && (
-                                    <div>
-                                        <p className="font-semibold mt-2 mb-1">Categorias:</p>
+                                    <div className='mt-4'>
+                                        <p className="font-semibold mt-2 mb-1">Categoria:</p>
                                         <ul className="list-disc list-inside">
                                             {documentData.categories.map(cat => (
                                                 <li key={cat.id}>{cat.name} ({cat.department?.name || 'Departamento Desconhecido'})</li>
@@ -186,7 +185,7 @@ export function DocumentViewModal({ isOpen, onClose, documentId }: DocumentViewM
                                 )}
 
                                 {documentData.restrictedToDepartments && documentData.restrictedToDepartments.length > 0 && (
-                                     <div>
+                                    <div>
                                         <p className="font-semibold mt-2 mb-1">Restrito a:</p>
                                         <ul className="list-disc list-inside">
                                             {documentData.restrictedToDepartments.map(dept => (
@@ -197,32 +196,25 @@ export function DocumentViewModal({ isOpen, onClose, documentId }: DocumentViewM
                                 )}
 
                                 {documentData.versions && documentData.versions.length > 0 && (
-                                    <div>
-                                        <p className="font-semibold mt-2 mb-1">Versões:</p>
-                                        <p className="text-xs">Versão atual: {documentData.versions[0]?.version || 'N/A'}</p>
-                                         <ul className="list-disc list-inside text-xs mt-1">
-                                             {documentData.versions.map(ver => <li key={ver.id}>V{ver.version} - {new Date(ver.createdAt).toLocaleDateString('pt-BR')}</li>)}
-                                         </ul>
+                                    <div className='mt-4'>
+                                        <p className="font-semibold mt-2 mb-1">Versão:</p>
+                                        <p className="text-xs">REV 0{documentData.versions[0]?.version || 'N/A'}</p>
                                     </div>
                                 )}
                             </div>
 
                             <div className="flex-1 ml-4 flex flex-col">
-                                <h3 className="font-semibold mb-2">Visualizador</h3>
+                                <h3 className="font-semibold mb-2 uppercase">Visualizador</h3>
                                 {documentFileUrl ? (
-                                    <iframe
-                                        src={documentFileUrl}
-                                        title={documentData.title}
+                                    <object data={documentFileUrl} title={documentData.title}
                                         className="w-full flex-1 border border-zinc-300 rounded-md"
-                                        style={{ minHeight: '300px' }}
-                                        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                                    >
-                                        Seu navegador não suporta iframes.
-                                    </iframe>
+                                        style={{ minHeight: '300px' }} type="application/pdf">
+<p>Não foi possível carregar o visualizador de PDF. <a href={documentFileUrl} target="_blank" rel="noopener noreferrer">Clique aqui para abrir em nova aba</a>.</p>
+                                    </object>
                                 ) : (
-                                     <div className="flex flex-col items-center justify-center h-full">
-                                          Preparando visualizador...
-                                     </div>
+                                    <div className="flex flex-col items-center justify-center h-full">
+                                        Preparando visualizador...
+                                    </div>
                                 )}
                             </div>
                         </div>

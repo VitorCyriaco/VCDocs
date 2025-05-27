@@ -74,19 +74,19 @@ export class DocumentsController {
                 restrictedDepartmentIds
             );
         } catch (serviceError: any) {
-             throw new HttpException(
-                 serviceError.message || 'Falha no processo de upload do documento.',
-                 HttpStatus.INTERNAL_SERVER_ERROR
-             );
-         }
+            throw new HttpException(
+                serviceError.message || 'Falha no processo de upload do documento.',
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     @Get('company')
     async getCompanyDocuments(@Request() req: any) {
         const user = req.user as User;
         if (!user.companyId) {
-             throw new ForbiddenException('Usuário não associado a uma empresa.');
-         }
+            throw new ForbiddenException('Usuário não associado a uma empresa.');
+        }
         return this.documentsService.getCompanyDocuments(user.companyId);
     }
 
@@ -100,9 +100,9 @@ export class DocumentsController {
         @Query('limit') limit: number = 10
     ) {
         const user = req.user as User;
-         if (!user.companyId) {
-             throw new ForbiddenException('Usuário não associado a uma empresa.');
-         }
+        if (!user.companyId) {
+            throw new ForbiddenException('Usuário não associado a uma empresa.');
+        }
 
         const pageNum = Number(page);
         const limitNum = Number(limit);
@@ -164,9 +164,9 @@ export class DocumentsController {
         @Request() req: any,
     ) {
         const user = req.user as User;
-         if (!user.companyId) {
-             throw new ForbiddenException('Usuário não associado a uma empresa.');
-         }
+        if (!user.companyId) {
+            throw new ForbiddenException('Usuário não associado a uma empresa.');
+        }
 
         try {
             const viewLog = await this.documentsService.logDocumentView(id, user.id, user.role, user.companyId);
@@ -175,17 +175,17 @@ export class DocumentsController {
                 log: viewLog
             };
         } catch (error: any) {
-             if (error instanceof NotFoundException) {
-                 throw new NotFoundException(error.message);
-             }
-             if (error instanceof ForbiddenException) {
-                 throw new ForbiddenException(error.message);
-             }
-             throw new HttpException(
-                 error.message || 'Erro interno ao registrar visualização.',
-                 HttpStatus.INTERNAL_SERVER_ERROR
-             );
-         }
+            if (error instanceof NotFoundException) {
+                throw new NotFoundException(error.message);
+            }
+            if (error instanceof ForbiddenException) {
+                throw new ForbiddenException(error.message);
+            }
+            throw new HttpException(
+                error.message || 'Erro interno ao registrar visualização.',
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
 
@@ -195,25 +195,25 @@ export class DocumentsController {
         @Request() req: any,
     ) {
         const user = req.user as User;
-         if (!user.companyId) {
-             throw new ForbiddenException('Usuário não associado a uma empresa.');
-         }
+        if (!user.companyId) {
+            throw new ForbiddenException('Usuário não associado a uma empresa.');
+        }
 
         try {
             const document = await this.documentsService.getDocumentById(id, user.id, user.role, user.companyId);
             return document;
         } catch (error: any) {
-              if (error instanceof NotFoundException) {
-                  throw new NotFoundException(error.message);
-              }
-              if (error instanceof ForbiddenException) {
-                  throw new ForbiddenException(error.message);
-              }
-              throw new HttpException(
-                  error.message || 'Erro interno ao obter detalhes do documento.',
-                  HttpStatus.INTERNAL_SERVER_ERROR
-              );
-          }
+            if (error instanceof NotFoundException) {
+                throw new NotFoundException(error.message);
+            }
+            if (error instanceof ForbiddenException) {
+                throw new ForbiddenException(error.message);
+            }
+            throw new HttpException(
+                error.message || 'Erro interno ao obter detalhes do documento.',
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     @Get(':id/signed-url')
@@ -222,64 +222,63 @@ export class DocumentsController {
         @Request() req: any
     ): Promise<{ url: string }> {
         const user = req.user as User;
-         if (!user.companyId) {
-             throw new ForbiddenException('Usuário não associado a uma empresa.');
-         }
+        if (!user.companyId) {
+            throw new ForbiddenException('Usuário não associado a uma empresa.');
+        }
 
         try {
             const signedUrl = await this.documentsService.generateSignedFileUrl(id, user.id, user.role, user.companyId);
             return { url: signedUrl };
         } catch (error: any) {
-              if (error instanceof NotFoundException) {
-                  throw new NotFoundException(error.message);
-              }
-              if (error instanceof ForbiddenException) {
-                  throw new ForbiddenException(error.message);
-              }
-              throw new HttpException(
-                  error.message || 'Erro interno ao gerar URL assinada.',
-                  HttpStatus.INTERNAL_SERVER_ERROR
-              );
-          }
+            if (error instanceof NotFoundException) {
+                throw new NotFoundException(error.message);
+            }
+            if (error instanceof ForbiddenException) {
+                throw new ForbiddenException(error.message);
+            }
+            throw new HttpException(
+                error.message || 'Erro interno ao gerar URL assinada.',
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     @Get(':documentId/file')
-    @UseGuards()
     async serveFile(
         @Param('documentId') documentId: string,
         @Query('token') token: string | undefined,
         @Res() res: Response
     ): Promise<void> {
+        console.log('Token:', token);
         try {
             await this.documentsService.serveDocumentFile(documentId, token, res);
         } catch (error: any) {
-             if (error instanceof NotFoundException) {
-                 res.status(HttpStatus.NOT_FOUND).send(error.message);
-             } else if (error instanceof ForbiddenException) {
-                 res.status(HttpStatus.FORBIDDEN).send(error.message);
-             } else {
-                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error.message || 'Erro interno ao servir o arquivo do documento.');
-             }
-         }
+            if (error instanceof NotFoundException) {
+                res.status(HttpStatus.NOT_FOUND).send(error.message);
+            } else if (error instanceof ForbiddenException) {
+                res.status(HttpStatus.FORBIDDEN).send(error.message);
+            } else {
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error.message || 'Erro interno ao servir o arquivo do documento.');
+            }
+        }
     }
 
     @Get(':documentId/download')
-    @UseGuards()
     async downloadDocument(
-      @Param('documentId') documentId: string,
-      @Query('token') token: string | undefined,
-      @Res() res: Response
+        @Param('documentId') documentId: string,
+        @Query('token') token: string | undefined,
+        @Res() res: Response
     ): Promise<void> {
-       try {
-         await this.documentsService.serveDocumentForDownload(documentId, token, res);
-       } catch (error: any) {
-         if (error instanceof NotFoundException) {
-             res.status(HttpStatus.NOT_FOUND).send(error.message);
-         } else if (error instanceof ForbiddenException) {
-             res.status(HttpStatus.FORBIDDEN).send(error.message);
-         } else {
-             res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error.message || 'Erro interno ao servir o arquivo para download.');
-         }
-       }
+        try {
+            await this.documentsService.serveDocumentForDownload(documentId, token, res);
+        } catch (error: any) {
+            if (error instanceof NotFoundException) {
+                res.status(HttpStatus.NOT_FOUND).send(error.message);
+            } else if (error instanceof ForbiddenException) {
+                res.status(HttpStatus.FORBIDDEN).send(error.message);
+            } else {
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error.message || 'Erro interno ao servir o arquivo para download.');
+            }
+        }
     }
 }

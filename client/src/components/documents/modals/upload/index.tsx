@@ -155,7 +155,7 @@ export function DocumentUploadModal({ isOpen, onClose }: DocumentUploadModalProp
 
     return (
         <div className="fixed inset-0 z-50" onClick={onClose}>
-            <div className="absolute flex flex-col h-auto w-100 bg-black/10 backdrop-blur-md top-20 left-2/5 rounded-b-md z-60 p-2 upload" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute flex flex-col h-auto w-100 bg-black/10 backdrop-blur-md top-20 left-2/5 rounded-md z-60 p-2 upload" onClick={(e) => e.stopPropagation()}>
                 <button
                     className="absolute top-2 right-2 text-xl cursor-pointer"
                     onClick={onClose}
@@ -179,69 +179,69 @@ export function DocumentUploadModal({ isOpen, onClose }: DocumentUploadModalProp
 
                     <div>
                         <label className="block text-sm font-medium mb-1">Selecionar Categorias</label>
-                            <div className="border border-zinc-300 rounded-md p-2 h-40 overflow-y-auto custom-scroll">
-                                {departments.map(department => (
-                                    <div key={department.id} className="flex flex-col mb-2">
-                                        <button
-                                            type="button"
-                                            className="flex items-center w-full text-left p-1 rounded hover:bg-black/5 text-sm font-medium"
-                                            onClick={() => handleDepartmentClick(department.id)}
-                                        >
-                                            {openDepartmentId === department.id ? (
-                                                <ChevronDown size={14} className="mr-1" />
-                                            ) : (
-                                                <ChevronRight size={14} className="mr-1" />
-                                            )}
-                                            <Folder size={14} className="mr-1" />
-                                            {department.name}
-                                        </button>
-
-                                        {openDepartmentId === department.id && (
-                                            <ul className="ml-6 mt-1 flex flex-col gap-1 text-sm">
-                                                {department.categories.length === 0 ? (
-                                                    <li className="italic p-1">Vazio.</li>
-                                                ) : (
-                                                    department.categories.map(category => (
-                                                        <li key={category.id} className="flex items-center p-1 rounded hover:bg-black/5">
-                                                            <input
-                                                                type="checkbox"
-                                                                id={`category-${category.id}`}
-                                                                value={category.id}
-                                                                checked={selectedCategoryIds.includes(category.id)}
-                                                                onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
-                                                                className="mr-2"
-                                                            />
-                                                            <label htmlFor={`category-${category.id}`} className="flex items-center">
-                                                                <FileText size={12} className="mr-1" />
-                                                                {category.name}
-                                                            </label>
-                                                        </li>
-                                                    ))
-                                                )}
-                                            </ul>
+                        <div className="border border-zinc-300 rounded-md p-2 h-40 overflow-y-auto custom-scroll">
+                            {departments.map(department => (
+                                <div key={department.id} className="flex flex-col mb-2">
+                                    <button
+                                        type="button"
+                                        className="flex items-center w-full text-left p-1 rounded hover:bg-black/5 text-sm font-medium"
+                                        onClick={() => handleDepartmentClick(department.id)}
+                                    >
+                                        {openDepartmentId === department.id ? (
+                                            <ChevronDown size={14} className="mr-1" />
+                                        ) : (
+                                            <ChevronRight size={14} className="mr-1" />
                                         )}
-                                    </div>
-                                ))}
-                            </div>
+                                        <Folder size={14} className="mr-1" />
+                                        {department.name}
+                                    </button>
+
+                                    {openDepartmentId === department.id && (
+                                        <ul className="ml-6 mt-1 flex flex-col gap-1 text-sm">
+                                            {department.categories.length === 0 ? (
+                                                <li className="italic p-1">Vazio.</li>
+                                            ) : (
+                                                department.categories.map(category => (
+                                                    <li key={category.id} className="flex items-center p-1 rounded hover:bg-black/5">
+                                                        <input
+                                                            type="checkbox"
+                                                            id={`category-${category.id}`}
+                                                            value={category.id}
+                                                            checked={selectedCategoryIds.includes(category.id)}
+                                                            onChange={(e) => handleCategoryChange(category.id, e.target.checked)}
+                                                            className="mr-2"
+                                                        />
+                                                        <label htmlFor={`category-${category.id}`} className="flex items-center">
+                                                            <FileText size={12} className="mr-1" />
+                                                            {category.name}
+                                                        </label>
+                                                    </li>
+                                                ))
+                                            )}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     <div>
                         <label htmlFor="restricted-department-select" className="block text-sm font-medium mb-1">Restrito aos Departamentos (Opcional)</label>
-                            <div className="border border-zinc-300 rounded-md p-2 h-24 overflow-y-auto custom-scroll">
-                                {departments.map(dept => (
-                                    <div key={dept.id} className="flex items-center text-sm mb-1">
-                                        <input
-                                            type="checkbox"
-                                            id={`restrict-${dept.id}`}
-                                            value={dept.id}
-                                            checked={selectedRestrictedDepartmentIds.includes(dept.id)}
-                                            onChange={(e) => handleRestrictedDepartmentChange(dept.id, e.target.checked)}
-                                            className="mr-2"
-                                        />
-                                        <label htmlFor={`restrict-${dept.id}`}>{dept.name}</label>
-                                    </div>
-                                ))}
-                            </div>
+                        <div className="border border-zinc-300 rounded-md p-2 h-24 overflow-y-auto custom-scroll">
+                            {departments.map(dept => (
+                                <div key={dept.id} className="flex items-center text-sm mb-1">
+                                    <input
+                                        type="checkbox"
+                                        id={`restrict-${dept.id}`}
+                                        value={dept.id}
+                                        checked={selectedRestrictedDepartmentIds.includes(dept.id)}
+                                        onChange={(e) => handleRestrictedDepartmentChange(dept.id, e.target.checked)}
+                                        className="mr-2"
+                                    />
+                                    <label htmlFor={`restrict-${dept.id}`}>{dept.name}</label>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     <button

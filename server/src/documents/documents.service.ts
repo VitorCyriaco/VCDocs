@@ -11,7 +11,7 @@ import { join } from 'path';
 export class DocumentsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private readonly TEMP_TOKEN_EXPIRATION_SECONDS = 60;
+  private readonly TEMP_TOKEN_EXPIRATION_SECONDS = 120;
 
   async findAll(
     userId: string,
@@ -150,7 +150,7 @@ export class DocumentsService {
           filePath: relativePath,
           uploadedById: userId,
           companyId: companyId,
-          status: 'pending',
+          status: 'Aguardando Aprovação',
           categories: {
             connect: categoryIds.map(id => ({ id })),
           },
@@ -464,7 +464,7 @@ export class DocumentsService {
         const document = await this.getDocumentById(documentId, userId, userRole, userCompanyId);
 
         const tempToken = uuidv4();
-        const expiresAt = new Date(Date.now() + this.TEMP_TOKEN_EXPIRATION_SECONDS * 1000);
+        const expiresAt = new Date(Date.now() + this.TEMP_TOKEN_EXPIRATION_SECONDS * 10000);
 
         try {
           if(document)
