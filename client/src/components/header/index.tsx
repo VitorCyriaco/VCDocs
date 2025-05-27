@@ -79,7 +79,7 @@ export function Header() {
                     </div>
                 </header>
             }
-            {userModal && !notifications && <UserModal closeModal={() => HandleModal(false, false)} />}
+            {userModal && <UserModal closeModal={() => HandleModal(false, false)} />}
             {notificationModal && !userModal && <NotificationsModal closeModal={() => HandleModal(false, false)} />}
         </>
     )
