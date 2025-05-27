@@ -6,6 +6,7 @@ import { Star, BadgeCheck, ChevronLeft, ChevronRight, File } from "lucide-react"
 import router from "next/router";
 import { DocumentsProps } from "@/types/documents";
 import { DocumentViewModal } from "./modals/viewer";
+import { DocumentReviewModal } from "./modals/review";
 
 export function DocumentsPage() {
 
@@ -86,6 +87,8 @@ export function DocumentsPage() {
         }
     };
 
+    const [reviewModal, setReviewModal] = useState(false)
+
     const [viewerModal, setViewerModal] = useState(false)
     const [docId, setDocId] = useState("")
 
@@ -129,14 +132,14 @@ export function DocumentsPage() {
                                 <div key={item.id} className="flex items-center mt-2 w-full mb-1">
                                     <input className="w-4 h-4" type="checkbox" />
                                     <ul className="grid grid-cols-20 ml-3 w-full justify-center">
-                                        <li className="flex border-x-1 border-black/20 justify-center col-span-1 self-center"><button className="cursor-pointer" onClick={() => {setViewerModal(true); setDocId(item.id)}}><File size={20} /></button></li>
+                                        <li className="flex border-x-1 border-black/20 justify-center col-span-1 self-center"><button className="cursor-pointer" onClick={() => { setViewerModal(true); setDocId(item.id) }}><File size={20} /></button></li>
                                         <li className="px-2 border-r-1 border-black/20 col-span-6 truncate">{item.title}</li>
                                         <li className="px-2 border-r-1 border-black/20 col-span-8 truncate">{item.description}</li>
                                         <li className="border-r-1 border-black/20 text-center col-span-2 truncate">{formattedDate}</li>
                                         <li className="border-r-1 border-black/20 text-center col-span-1 truncate">{ }</li>
                                         <li className="border-r-1 border-black/20 col-span-1 flex justify-center"><button className="cursor-pointer"><Star size={20} /></button></li>
                                         {item.status === "pending" &&
-                                            <li className="flex justify-center col-span-1 self-center"><BadgeCheck size={20} /></li>
+                                            <li className="flex justify-center col-span-1 self-center"><button className="cursor-pointer"><BadgeCheck onClick={() => { setReviewModal(true); setDocId(item.id) }} size={20} /></button></li>
                                         }
                                         {item.status === "approved" &&
                                             <li className="flex justify-center col-span-1 self-center"><BadgeCheck size={20} color="green" /></li>
@@ -163,6 +166,8 @@ export function DocumentsPage() {
                 </div>
             </div>
             {viewerModal && <DocumentViewModal isOpen={viewerModal} onClose={() => setViewerModal(false)} documentId={docId} />}
+
+            {reviewModal && <DocumentReviewModal isOpen={reviewModal} onClose={() => setReviewModal(false)} documentId={docId} />}
         </>
     )
 }
